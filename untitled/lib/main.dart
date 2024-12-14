@@ -1,11 +1,13 @@
+import 'dart:io';
 import 'dart:math';
-
 import 'package:flutter/material.dart';
-
 import '../Ui/colors.dart';
 import '../widget/figure_image.dart';
+
+import 'package:flutter/services.dart';
 import 'Pages/GameOverPage.dart';
 import 'Pages/HomePage.dart';
+import 'Ui/colors.dart';
 import 'game.dart';
 
 void main() {
