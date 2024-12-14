@@ -1,4 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+
+import '../Ui/colors.dart';
+import '../widget/figure_image.dart';
+import 'Pages/GameOverPage.dart';
+import 'Pages/HomePage.dart';
+import 'game.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,119 +15,282 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a blue toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: HomeScreen(),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
+class HomeApp extends StatefulWidget {
+  final List<String> words;
 
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
+  const HomeApp({super.key, required this.words});
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<HomeApp> createState() => _HomeAppState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class _HomeAppState extends State<HomeApp> {
+  late String word;
 
-  void _incrementCounter() {
+  @override
+  void initState() {
+    super.initState();
+    _loadWords();
+    _restartGame();
+  }
+
+  String splitCamelCase(String input) {
+    return input.replaceAllMapped(RegExp(r'([a-z0-9])([A-Z])'), (Match match) {
+      return match.group(1)! + " " + match.group(2)!.toLowerCase();
+    }).toUpperCase();
+  }
+
+  void _loadWords() {
+    if (widget.words.isEmpty) {
+      word = "";
+      Game.tries = 0;
+      Game.selectedChar.clear();
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Error"),
+          content: Text("No words available. Please select a valid category."),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("OK"),
+            ),
+          ],
+        ),
+      );
+    } else {
+      word = widget.words[Random().nextInt(widget.words.length)].toUpperCase();
+    }
+  }
+
+  void _restartGame() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      if (widget.words.isNotEmpty) {
+        word = widget.words[Random().nextInt(widget.words.length)].toUpperCase();
+        Game.tries = 0;
+        Game.selectedChar.clear();
+      } else {
+        word = "";
+        Game.tries = 0;
+        Game.selectedChar.clear();
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: Text("Error"),
+            content: Text("No words available. Please select a valid category."),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text("OK"),
+              ),
+            ],
+          ),
+        );
+      }
     });
+  }
+
+  void _checkGameState() {
+    if (word.split('').every((letter) => Game.selectedChar.contains(letter))) {
+      _showEndDialog("You Win!", AppColor.primaryColorDark);
+    } else if (Game.tries >= 6) {
+      setState(() {
+        Game.selectedChar.addAll(word.split(' ').join('').split(''));
+      });
+      Future.delayed(Duration(seconds: 3), () {
+
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => GameOverScreen()),
+        );
+        _restartGame();
+      });
+    }
+  }
+
+  void _showEndDialog(String message, Color color) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppColor.secondryColor,
+          title: Text(
+            message,
+            style: TextStyle(color: color, fontWeight: FontWeight.bold),
+          ),
+          content: Text("The word was: $word"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _restartGame();
+              },
+              child: Text(
+                "Play Again",
+                style: TextStyle(
+                  color: AppColor.primaryColorDark,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
+      backgroundColor: AppColor.primaryColorDark,
       appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        title: Text("HangMan"),
+        elevation: 0,
+        centerTitle: true,
+        backgroundColor: AppColor.primaryColorDark,
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
+      body: SingleChildScrollView(  // Make the whole page scrollable vertically
         child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Center(
+              child: Stack(
+                children: [
+                  figureImage(Game.tries >= 0, "assets/hang.png"),
+                  figureImage(Game.tries >= 1, "assets/head.png"),
+                  figureImage(Game.tries >= 2, "assets/body.png"),
+                  figureImage(Game.tries >= 2 && Game.tries != 4 && Game.tries != 5 && Game.tries != 6, "assets/happyhead.png"),
+                  figureImage(Game.tries >= 3, "assets/la.png"),
+                  figureImage(Game.tries >= 4, "assets/ra.png"),
+                  figureImage(Game.tries >= 4 && Game.tries != 5 && Game.tries != 6, "assets/neutralhead.png"),
+                  figureImage(Game.tries >= 5, "assets/ll.png"),
+                  figureImage(Game.tries >= 5 && Game.tries != 6, "assets/sadhead.png"),
+                  figureImage(Game.tries == 6, "assets/rl.png"),
+                  figureImage(Game.tries == 6, "assets/deadface.png"),
+                ],
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+            // Word display section
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,  // Enable horizontal scrolling if needed
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: word.split(' ').map((wordPart) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8.0),  // Padding between words
+                    child: Wrap(
+                      alignment: WrapAlignment.center,  // Align items to the center
+                      spacing: 8.0,  // Space between each letter box
+                      runSpacing: 8.0,  // Space between lines of letters
+                      children: wordPart.split('').map((e) {
+                        double screenWidth = MediaQuery.of(context).size.width;
+                        double letterWidth = (screenWidth - 40) / wordPart.length;  // Calculate the width dynamically
+                        letterWidth = letterWidth.clamp(30.0, 50.0);  // Limit the width to avoid too small letters
+
+                        return Container(
+                          width: letterWidth,
+                          height: letterWidth,
+                          margin: const EdgeInsets.symmetric(horizontal: 6.0),  // Margin between letter boxes
+                          decoration: BoxDecoration(
+                            color: AppColor.secondryColorDark,
+                            borderRadius: BorderRadius.circular(4.0),
+                          ),
+                          alignment: Alignment.center,
+                          child: Visibility(
+                            visible: e == " " || Game.selectedChar.contains(e.toUpperCase()),  // Show letter or space if guessed
+                            child: Text(
+                              e == " " ? " " : (Game.selectedChar.contains(e.toUpperCase()) ? e : "_"),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: letterWidth * 0.6,  // Adjust font size based on width
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }).toList(),
+              ),
+            )
+            ,
+            // Keyboard section
+            SizedBox(
+              width: double.infinity,
+              height: 250.0,
+              child: GridView.count(
+                crossAxisCount: 7,
+                mainAxisSpacing: 8.0,
+                crossAxisSpacing: 8.0,
+                padding: EdgeInsets.all(7.0),
+                children: List.generate(26, (index) {
+                  String e = String.fromCharCode(65 + index);
+                  return RawMaterialButton(
+                    onPressed: Game.selectedChar.contains(e)
+                        ? null
+                        : () {
+                      setState(() {
+                        Game.selectedChar.add(e);
+                        if (!word.split('').contains(e)) {
+                          Game.tries++;
+                        }
+                        _checkGameState();
+                      });
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: Text(
+                      e,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    fillColor: Game.selectedChar.contains(e)
+                        ? AppColor.primaryColor
+                        : AppColor.secondryColorDark,
+                  );
+                }),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: ElevatedButton(
+                onPressed: _restartGame,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColor.teaGreen,
+                ),
+                child: Text(
+                  "Restart Game",
+                  style: TextStyle(
+                    color: AppColor.primaryColorDark,
+                    fontSize: 20.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
