@@ -70,6 +70,10 @@ A simple and fun Hangman game built with [Flutter](https://flutter.dev/) to chal
 <!-- Add your screen recording here -->
 
 
+https://github.com/user-attachments/assets/05f07f2b-314f-4655-a0b0-c00d0527ae53
+
+
+
 
 Enjoy the game and challenge your friends! 🕹️
 
