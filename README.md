@@ -31,15 +31,16 @@ A simple and fun Hangman game built with [Flutter](https://flutter.dev/) to chal
 
 | Name                   | Hex Code     | Preview                  |
 |------------------------|--------------|--------------------------|
-| Tea Green              | `#CEDAB9`    | ![](https://via.placeholder.com/100x100/CEDAB9/000000?text=+) |
-| Cambridge Blue         | `#7F9F92`    | ![](https://via.placeholder.com/100x100/7F9F92/000000?text=+) |
-| Cambridge Blue 2       | `#A2C1A3`    | ![](https://via.placeholder.com/100x100/A2C1A3/000000?text=+) |
-| Wheat                  | `#F3DEAF`    | ![](https://via.placeholder.com/100x100/F3DEAF/000000?text=+) |
-| Buff                   | `#EBC389`    | ![](https://via.placeholder.com/100x100/EBC389/000000?text=+) |
-| Primary Color Dark     | `#556869`    | ![](https://via.placeholder.com/100x100/556869/FFFFFF?text=+) |
-| Primary Color          | `#81A59A`    | ![](https://via.placeholder.com/100x100/81A59A/000000?text=+) |
-| Secondary Color        | `#ECC3B0`    | ![](https://via.placeholder.com/100x100/ECC3B0/000000?text=+) |
-| Secondary Color Dark   | `#CFBFB9`    | ![](https://via.placeholder.com/100x100/CFBFB9/000000?text=+) |
+| Tea Green              | `#CEDAB9`    | ![](https://img.shields.io/badge/-%20-CEDAB9?style=flat&color=CEDAB9) |
+| Cambridge Blue         | `#7F9F92`    | ![](https://img.shields.io/badge/-%20-7F9F92?style=flat&color=7F9F92) |
+| Cambridge Blue 2       | `#A2C1A3`    | ![](https://img.shields.io/badge/-%20-A2C1A3?style=flat&color=A2C1A3) |
+| Wheat                  | `#F3DEAF`    | ![](https://img.shields.io/badge/-%20-F3DEAF?style=flat&color=F3DEAF) |
+| Buff                   | `#EBC389`    | ![](https://img.shields.io/badge/-%20-EBC389?style=flat&color=EBC389) |
+| Primary Color Dark     | `#556869`    | ![](https://img.shields.io/badge/-%20-556869?style=flat&color=556869) |
+| Primary Color          | `#81A59A`    | ![](https://img.shields.io/badge/-%20-81A59A?style=flat&color=81A59A) |
+| Secondary Color        | `#ECC3B0`    | ![](https://img.shields.io/badge/-%20-ECC3B0?style=flat&color=ECC3B0) |
+| Secondary Color Dark   | `#CFBFB9`    | ![](https://img.shields.io/badge/-%20-CFBFB9?style=flat&color=CFBFB9) |
+
 
 ## 📂 Project Structure
 - **Models**:
@@ -73,7 +74,8 @@ A simple and fun Hangman game built with [Flutter](https://flutter.dev/) to chal
 https://github.com/user-attachments/assets/05f07f2b-314f-4655-a0b0-c00d0527ae53
 
 
-
+Download app:
+https://github.com/linah31/Hangman-Game-Flutter/releases/latest
 
 Enjoy the game and challenge your friends! 🕹️
 
